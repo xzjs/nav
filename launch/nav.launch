@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+    <node name="my_map" pkg="nav" type="map_server.py"/>
+    <node name="my_position" pkg="nav" type="position_server.py"/>
+    <node name="my_nav" pkg="nav" type="nav_sub.py"/>
+    <!--<node name="my_camera" pkg="nav" type="cam_pub.py"/>-->
+    <node name="my_scan" pkg="nav" type="scan_pub.py"/>
+</launch>
