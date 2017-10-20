@@ -42,7 +42,6 @@ def talker():
 
 if __name__ == '__main__':
     try:
-        ic = image_feature()
         rospy.init_node('my_camera', anonymous=True)
         rospy.loginfo('start canera')
         talker()
