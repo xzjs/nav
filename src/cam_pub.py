@@ -5,11 +5,12 @@ import pickle
 
 import cv2
 import numpy as np
-import roslib
 import rospy
 from sensor_msgs.msg import CompressedImage
+import time
 
 cap = cv2.VideoCapture(0)
+time.sleep(1)
 # context = zmq.Context()
 # socket = context.socket(zmq.PUB)
 # socket.bind("tcp://*:5555")
@@ -19,12 +20,11 @@ cap = cv2.VideoCapture(0)
 def talker():
     '''cam Publisher'''
     pub = rospy.Publisher('/camera_data', CompressedImage, queue_size=10)
-
     rate = rospy.Rate(2)
     while not rospy.is_shutdown():
         ret, frame = cap.read()
-        # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        # cv2.imshow('frame', gray)
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        cv2.imshow('frame', gray)
         res = cv2.resize(frame, (320, 240), interpolation=cv2.INTER_CUBIC)
         # cv2.imwrite("/tmp/camera.jpg", res)
         # f = open('/tmp/camera.jpg', 'rb')  # 读取摄像头图片
@@ -35,7 +35,7 @@ def talker():
         msg.format = "jpeg"
         msg.data = np.array(cv2.imencode('.jpg', res)[1]).tostring()
         pub.publish(msg)
-        rospy.loginfo(msg)
+        # rospy.loginfo(msg)
         rate.sleep()
 
 
@@ -43,6 +43,7 @@ if __name__ == '__main__':
     try:
         rospy.init_node('my_camera', anonymous=True)
         rospy.loginfo('start canera')
+        time.sleep(1)
         talker()
     except rospy.ROSInterruptException:
         cap.release()

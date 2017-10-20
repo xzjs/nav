@@ -1,13 +1,13 @@
 #!/usr/bin/env python
-'''speed ROS Node'''
+'''test ROS Node'''
 # license removed for brevity
 import rospy
 from std_msgs.msg import String
 
 def talker():
-    '''speed Publisher'''
+    '''test Publisher'''
     pub = rospy.Publisher('chatter', String, queue_size=10)
-    rospy.init_node('speed', anonymous=True)
+    rospy.init_node('test', anonymous=True)
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
         hello_str = "hello world %s" % rospy.get_time()
