@@ -11,10 +11,10 @@ import rospy
 from sensor_msgs.msg import CompressedImage
 
 cap = cv2.VideoCapture(0)
-context = zmq.Context()
-socket = context.socket(zmq.PUB)
+# context = zmq.Context()
+# socket = context.socket(zmq.PUB)
 # socket.bind("tcp://*:5555")
-socket.connect("tcp://192.168.31.5:5555")
+# socket.connect("tcp://192.168.31.5:5555")
 
 
 def talker():
@@ -31,10 +31,10 @@ def talker():
         # f = open('/tmp/camera.jpg', 'rb')  # 读取摄像头图片
         # data = f.read() + '---' + 'cam'
         # socket.send(data)
-        msg=CompressedImage()
-        msg.header.stamp=rospy.Time.now()
-        msg.format="jpeg"
-        msg.data=np.array(cv2.imencode('.jpg',res)[1]).tostring()
+        msg = CompressedImage()
+        msg.header.stamp = rospy.Time.now()
+        msg.format = "jpeg"
+        msg.data = np.array(cv2.imencode('.jpg', res)[1]).tostring()
         pub.publish(msg)
         rospy.loginfo('upload success')
         rate.sleep()
