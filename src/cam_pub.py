@@ -6,7 +6,6 @@ import pickle
 import cv2
 import numpy as np
 import roslib
-# license removed for brevity
 import rospy
 from sensor_msgs.msg import CompressedImage
 
@@ -36,7 +35,7 @@ def talker():
         msg.format = "jpeg"
         msg.data = np.array(cv2.imencode('.jpg', res)[1]).tostring()
         pub.publish(msg)
-        rospy.loginfo('upload success')
+        rospy.loginfo(msg)
         rate.sleep()
 
 
