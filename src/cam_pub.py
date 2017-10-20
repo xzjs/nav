@@ -19,9 +19,9 @@ cap = cv2.VideoCapture(0)
 
 def talker():
     '''cam Publisher'''
-    pub = rospy.Publisher('camera_data', CompressedImage, queue_size=10)
+    pub = rospy.Publisher('/camera_data', CompressedImage, queue_size=10)
 
-    rate = rospy.Rate(5)
+    rate = rospy.Rate(2)
     while not rospy.is_shutdown():
         ret, frame = cap.read()
         # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
