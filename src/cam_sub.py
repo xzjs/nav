@@ -1,21 +1,26 @@
 #!/usr/bin/env python
 import zmq
 import time
+import cv2
 
 
 def listener():
     context = zmq.Context()
     socket = context.socket(zmq.SUB)
-    socket.bind("tcp://*:5558")
-    # socket.connect("tcp://localhost:5555")
+    socket.connect("tcp://192.168.31.4:5555")
     socket.setsockopt(zmq.SUBSCRIBE, '')
-    print("waiting camera,listen 5558")
+    print("waiting camera")
+    # req_socket = context.socket(zmq.REQ)
+    # req_socket.connect("tcp://172.18.29.153:5555")
 
     while True:
         recv = socket.recv()
-        f = open('../map/camera.jpg', 'wb')
+        f = open('/tmp/camera.jpg', 'wb')
         f.write(recv)
         f.close()
+        image=cv2.imread("/tmp/camera.jpg")
+        res = cv2.resize(image, (320,240), interpolation=cv2.INTER_AREA)
+        cv2.imwrite("/tmp/camera_min.jpg")
         print 'ok,time ', time.time()
 
 
