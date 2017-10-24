@@ -19,7 +19,7 @@ def talker():
     '''cam Publisher'''
     rospy.init_node('my_cam', anonymous=True)
 
-    rate = rospy.Rate(5)
+    rate = rospy.Rate(2)
     while not rospy.is_shutdown():
         ret, frame = cap.read()
         # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)

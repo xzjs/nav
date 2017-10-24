@@ -1,7 +1,9 @@
 #!/usr/bin/env python
+# -*- coding:utf-8 -*-
 import zmq
 import time
 import cv2
+import detection
 
 
 def listener():
@@ -10,18 +12,37 @@ def listener():
     socket.connect("tcp://192.168.31.4:5555")
     socket.setsockopt(zmq.SUBSCRIBE, '')
     print("waiting camera")
-    # req_socket = context.socket(zmq.REQ)
-    # req_socket.connect("tcp://172.18.29.153:5555")
+    req_socket = context.socket(zmq.REQ)
+    req_socket.connect("tcp://172.18.29.153:5555")
+    # req_socket.connect("tcp://localhost:5555")
+    net, classes = detection.get_net()
 
     while True:
+        # 接收消息存储图片
         recv = socket.recv()
         f = open('/tmp/camera.jpg', 'wb')
         f.write(recv)
         f.close()
-        image=cv2.imread("/tmp/camera.jpg")
-        res = cv2.resize(image, (320,240), interpolation=cv2.INTER_AREA)
-        cv2.imwrite("/tmp/camera_min.jpg")
-        print 'ok,time ', time.time()
+
+        # 发布图片
+        result = detection.recognize(net, classes)
+        if result:
+            # print result
+            req_socket.send(result + "---recognition")
+            response = req_socket.recv()
+            print "upload recogniction success", response
+
+        # 压缩图片
+        image = cv2.imread("/tmp/camera.jpg")
+        res = cv2.resize(image, (320, 240), interpolation=cv2.INTER_AREA)
+        cv2.imwrite("/tmp/camera_min.jpg", res)
+
+        # 上传图片
+        f = open('/tmp/camera_min.jpg', 'rb')  # 读取摄像头图片
+        data = f.read() + '---cam'
+        req_socket.send(data)
+        response = req_socket.recv()
+        print 'upload camera success', response
 
 
 if __name__ == '__main__':

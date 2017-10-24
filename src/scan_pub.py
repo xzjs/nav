@@ -12,7 +12,7 @@ import requests
 import random
 
 context = zmq.Context()
-socket = context.socket(zmq.PUB)
+socket = context.socket(zmq.REQ)
 socket.connect("tcp://172.18.29.153:5555")
 # socket.connect("tcp://127.0.0.1:5555")
 i = 0
@@ -24,7 +24,9 @@ def callback(data):
     global i
     pic = requests.get(
         'http://192.168.12.20/img/laser_map/laser_map_' + str(i) + '.png?' + str(time.time()))
-    socket.send(pic.content+"---scan")
+    socket.send(pic.content + "---scan")
+    response = socket.recv()
+    print "laser", response
     if i == 19:
         i = 0
     else:
