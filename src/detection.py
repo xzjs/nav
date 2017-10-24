@@ -36,21 +36,27 @@ def get_net():
     '''初始化图像识别模块'''
 
     cfg.TEST.HAS_RPN = True  # Use RPN for proposals
-    args = parse_args()
+    # args = parse_args()
+    args = {'caffemodel': '/home/ros/code/py-faster-rcnn.bak/data/faster_rcnn_models/zf_voc.caffemodel',
+            'classes': 'voc',
+            'cpu_mode': False,
+            'gpu_id': 0,
+            'prototxt': '/home/ros/code/py-faster-rcnn.bak/data/faster_rcnn_models/zf_voc.pt'}
+    print args
 
-    Classes = CLASSES[args.classes]
-    prototxt = args.prototxt
-    caffemodel = args.caffemodel
+    Classes = CLASSES[args['classes']]
+    prototxt = args['prototxt']
+    caffemodel = args['caffemodel']
     if not os.path.isfile(caffemodel):
         raise IOError(('{:s} not found.\nDid you run ./data/script/'
                        'fetch_faster_rcnn_models.sh?').format(caffemodel))
 
-    if args.cpu_mode:
+    if args['cpu_mode']:
         caffe.set_mode_cpu()
     else:
         caffe.set_mode_gpu()
-        caffe.set_device(args.gpu_id)
-        cfg.GPU_ID = args.gpu_id
+        caffe.set_device(args['gpu_id'])
+        cfg.GPU_ID = args['gpu_id']
     net = caffe.Net(prototxt, caffemodel, caffe.TEST)
     return net, Classes
 

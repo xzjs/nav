@@ -6,7 +6,7 @@ import threading
 
 
 def savefile(path, data, type):
-    f = open('../map/' + path, type)
+    f = open('/var/www/server/map/' + path, type)
     f.write(data)
     f.close()
     print path + ' ok,time ', time.time()

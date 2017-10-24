@@ -4,6 +4,7 @@ import zmq
 import time
 import cv2
 import detection
+import rospy
 
 
 def listener():
@@ -46,4 +47,5 @@ def listener():
 
 
 if __name__ == '__main__':
+    rospy.init_node('my_camera', anonymous=True)
     listener()
