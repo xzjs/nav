@@ -5,6 +5,8 @@ import time
 import cv2
 import detection
 import rospy
+import numpy as np
+import base64
 
 
 def listener():
@@ -21,29 +23,29 @@ def listener():
     while True:
         # 接收消息存储图片
         recv = socket.recv()
-        f = open('/tmp/camera.jpg', 'wb')
-        f.write(recv)
-        f.close()
+        print time.time()
+        nparr = np.fromstring(recv, np.uint8)
+        img_decode = cv2.imdecode(nparr, 1)
+        cv2.imwrite("test.jpg", img_decode)
 
-        # 发布图片
-        result = detection.recognize(net, classes)
+        # 压缩图片
+        res = cv2.resize(img_decode, (320, 240), interpolation=cv2.INTER_AREA)
+
+        # 上传图片
+        img_encode = cv2.imencode('.jpg', res)[1]
+        data_encode = np.array(img_encode)
+        str_encode = data_encode.tostring()
+        req_socket.send(str_encode + "---cam")
+        response = req_socket.recv()
+        print 'upload camera success', response
+
+        # 识别图片
+        result = detection.recognize(net, classes, img_decode)
         if result:
             # print result
             req_socket.send(result + "---recognition")
             response = req_socket.recv()
             print "upload recogniction success", response
-
-        # 压缩图片
-        image = cv2.imread("/tmp/camera.jpg")
-        res = cv2.resize(image, (320, 240), interpolation=cv2.INTER_AREA)
-        cv2.imwrite("/tmp/camera_min.jpg", res)
-
-        # 上传图片
-        f = open('/tmp/camera_min.jpg', 'rb')  # 读取摄像头图片
-        data = f.read() + '---cam'
-        req_socket.send(data)
-        response = req_socket.recv()
-        print 'upload camera success', response
 
 
 if __name__ == '__main__':

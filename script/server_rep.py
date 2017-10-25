@@ -3,6 +3,7 @@
 import zmq
 import time
 import threading
+import numpy as np
 
 
 def savefile(path, data, type):
