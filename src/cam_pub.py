@@ -8,6 +8,7 @@ import cv2
 import numpy as np
 import pickle
 import zmq
+import time
 
 cap = cv2.VideoCapture(0)
 context = zmq.Context()
