@@ -61,10 +61,11 @@ def get_net():
     return net, Classes
 
 
-def recognize(net, Classes):
+def recognize(net, Classes, im):
     '''图像识别函数'''
-    im_path = "/tmp/camera.jpg"
-    image = cv2.imread(im_path)
+    # im_path = "/tmp/camera.jpg"
+    # image = cv2.imread(im_path)
+    image = im
     object_list = demo(net, image, Classes)
     if len(object_list):
         res_list = json.dumps(object_list)
