@@ -29,7 +29,7 @@ def talker():
         # f = open('/tmp/camera.jpg', 'rb')  # 读取摄像头图片
         # data = f.read() + '---' + 'cam'
         # socket.send(data)
-        socket.send(frame)
+        socket.send(frame.tobytes())
 
         rospy.loginfo('upload success')
         rate.sleep()

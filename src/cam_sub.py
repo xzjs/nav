@@ -5,6 +5,7 @@ import time
 import cv2
 import detection
 import rospy
+import numpy as np
 
 
 def listener():
@@ -21,6 +22,7 @@ def listener():
     while True:
         # 接收消息存储图片
         recv = socket.recv()
+        frame=cv2.imdecode(np.fromstring(recv,np.uint8))
         gray = cv2.cvtColor(recv, cv2.COLOR_BGR2GRAY)
         cv2.imshow('frame', gray)
         # f = open('/tmp/camera.jpg', 'wb')
