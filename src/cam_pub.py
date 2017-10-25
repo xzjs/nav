@@ -32,9 +32,8 @@ def talker():
         img_encode = cv2.imencode('.jpg', frame)[1]
         data_encode = np.array(img_encode)
         str_encode = data_encode.tostring()
+        rospy.loginfo(str(time.time()))
         socket.send(str_encode)
-
-        rospy.loginfo('upload success')
         rate.sleep()
 
 
