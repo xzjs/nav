@@ -6,6 +6,7 @@ import cv2
 import detection
 import rospy
 import numpy as np
+import base64
 
 
 def listener():

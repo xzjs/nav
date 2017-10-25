@@ -13,14 +13,6 @@ def savefile(path, data, type):
     print path + ' ok,time ', time.time()
 
 
-def save_img(path, data):
-    '''保存图片'''
-    nparr = np.fromstring(data, np.uint8)
-    img_decode = cv2.imdecode(nparr, 1)
-    cv2.imwrite('/var/www/server/map/' + path, img_decode)
-    print path, 'ok,time', time.time()
-
-
 def listener():
     context = zmq.Context()
     socket = context.socket(zmq.REP)
@@ -44,12 +36,8 @@ def listener():
             func = 'wb'  # 读写方式
             if data[1] == 'position':
                 func = 'w'
-            if data[1] == 'cam':
-                t = threading.Thread(target=save_img, args=(
-                    nameDict[data[1]], data[0], ))
-            else:
-                t = threading.Thread(target=savefile, args=(
-                    nameDict[data[1]], data[0], func,))
+            t = threading.Thread(target=savefile, args=(
+                nameDict[data[1]], data[0], func,))
             t.setDaemon(True)
             t.start()
 
