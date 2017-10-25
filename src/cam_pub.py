@@ -25,10 +25,11 @@ def talker():
         # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         # cv2.imshow('frame', gray)
         # res = cv2.resize(frame, (320, 240), interpolation=cv2.INTER_CUBIC)
-        cv2.imwrite("/tmp/camera.jpg", frame)
-        f = open('/tmp/camera.jpg', 'rb')  # 读取摄像头图片
-        data = f.read() + '---' + 'cam'
-        socket.send(data)
+        # cv2.imwrite("/tmp/camera.jpg", frame)
+        # f = open('/tmp/camera.jpg', 'rb')  # 读取摄像头图片
+        # data = f.read() + '---' + 'cam'
+        # socket.send(data)
+        socket.send(frame)
 
         rospy.loginfo('upload success')
         rate.sleep()
