@@ -22,9 +22,9 @@ def listener():
     while True:
         # 接收消息存储图片
         recv = socket.recv()
-        frame=cv2.imdecode(np.fromstring(recv,np.uint8))
-        gray = cv2.cvtColor(recv, cv2.COLOR_BGR2GRAY)
-        cv2.imshow('frame', gray)
+        nparr = np.fromstring(recv, np.uint8)
+        img_decode = cv2.imdecode(nparr, 1)
+        cv2.imshow('frame', img_decode)
         # f = open('/tmp/camera.jpg', 'wb')
         # f.write(recv)
         # f.close()
