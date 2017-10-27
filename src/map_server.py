@@ -12,7 +12,7 @@ import json
 
 
 context = zmq.Context()
-socket = context.socket(zmq.PUB)
+socket = context.socket(zmq.REQ)
 # socket.connect("tcp://127.0.0.1:5555")
 socket.connect("tcp://172.18.29.153:5555")
 
@@ -40,6 +40,7 @@ def mapService(map):
     f = open('/tmp/map.png', 'rb')  # 读取地图数据
     data = f.read() + '---map---' + str(map.header.stamp)
     socket.send(data)
+    response=socket.recv()
 
 
 def getMap():
