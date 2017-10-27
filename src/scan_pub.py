@@ -9,15 +9,18 @@ import zmq
 from sensor_msgs.msg import LaserScan
 import json
 
-context = zmq.Context()
-socket = context.socket(zmq.REQ)
-socket.connect("tcp://172.18.29.153:5555")
+
 # socket.connect("tcp://127.0.0.1:5555")
 
 
 def callback(data):
     '''scan Callback Function'''
-    s = json.dumps(data.ranges) + '---scan'
+    context = zmq.Context()
+    socket = context.socket(zmq.REQ)
+    socket.connect("tcp://172.18.29.153:5555")
+    # print data
+    d = {'frame_id': data.header.frame_id, 'ranges': data.ranges}
+    s = json.dumps(d) + '---scan'
     # print s
     socket.send(s)
     response = socket.recv()
