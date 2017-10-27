@@ -10,11 +10,11 @@ import json
 def savefile(path, data, type):
     if path == "laser.json":
         laser = json.loads(data)
-        if laser.frame_id == "/front_laser_link":
+        if laser['frame_id'] == "/front_laser_link":
             path = "f_laser.json"
         else:
             path = "b_laser.json"
-        data = json.dumps(laser.ranges)
+        data = json.dumps(laser['ranges'])
     f = open('/var/www/server/map/' + path, type)
     f.write(data)
     f.close()
