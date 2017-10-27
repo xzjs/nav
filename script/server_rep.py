@@ -22,7 +22,7 @@ def listener():
     nameDict = {
         'map': 'map.png',
         'cam': 'camera.jpg',
-        'scan': 'laser.png',
+        'scan': 'laser.json',
         'position': 'position.json',
         'recognition': 'recognition.json'
     }

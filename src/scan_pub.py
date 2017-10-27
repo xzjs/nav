@@ -7,36 +7,27 @@ import time
 import rospy
 import zmq
 from sensor_msgs.msg import LaserScan
-
-import requests
-import random
+import json
 
 context = zmq.Context()
 socket = context.socket(zmq.REQ)
 socket.connect("tcp://172.18.29.153:5555")
 # socket.connect("tcp://127.0.0.1:5555")
-i = 0
 
 
 def callback(data):
     '''scan Callback Function'''
-    # rospy.loginfo(len(data.ranges))
-    global i
-    pic = requests.get(
-        'http://192.168.12.20/img/laser_map/laser_map_' + str(i) + '.png?' + str(time.time()))
-    socket.send(pic.content + "---scan")
+    s = json.dumps(data.ranges) + '---scan'
+    # print s
+    socket.send(s)
     response = socket.recv()
     print "laser", response
-    if i == 19:
-        i = 0
-    else:
-        i = i + 1
 
 
 def listener():
     '''scan Subscriber'''
 
-    rospy.Subscriber("/f_scan", LaserScan, callback)
+    rospy.Subscriber("/scan", LaserScan, callback)
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
