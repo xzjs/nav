@@ -27,5 +27,4 @@ class WebsocketTest {
         $this->server->start();
     }
 }
-echo 'hello world';
 $ws=new WebsocketTest();

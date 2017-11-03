@@ -5,6 +5,13 @@ import time
 import threading
 import numpy as np
 import json
+import myclass
+
+
+class Factory:
+    def getClass(self, type):
+        if type == 'rgb':
+            return myclass.rgb.Rgb()
 
 
 def savefile(path, data, type):
@@ -27,6 +34,8 @@ def listener():
     socket.bind("tcp://*:5555")
     print("service start,listening 5555")
 
+    factory = Factory()
+
     nameDict = {
         'map': 'map.png',
         'cam': 'camera.jpg',
@@ -40,14 +49,16 @@ def listener():
         socket.send(str(time.time()))
         data = recv.split('---')
         if data[1] in nameDict:
+            obj = factory.getClass(data[1])
+            obj.do(data[0])
             # print data[1]
-            func = 'wb'  # 读写方式
-            if data[1] == 'position':
-                func = 'w'
-            t = threading.Thread(target=savefile, args=(
-                nameDict[data[1]], data[0], func,))
-            t.setDaemon(True)
-            t.start()
+            # func = 'wb'  # 读写方式
+            # if data[1] == 'position':
+            #     func = 'w'
+            # t = threading.Thread(target=savefile, args=(
+            #     nameDict[data[1]], data[0], func,))
+            # t.setDaemon(True)
+            # t.start()
 
 
 if __name__ == '__main__':
