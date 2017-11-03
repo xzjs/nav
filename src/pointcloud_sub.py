@@ -1,9 +1,11 @@
 #!/usr/bin/env python
+# -*- coding:utf-8 -*-
 '''pointCloud ROS Node'''
-import rospy
-from sensor_msgs.msg import PointCloud2
 import json
+
+import rospy
 import zmq
+from sensor_msgs.msg import PointCloud2
 
 
 def callback(data):
