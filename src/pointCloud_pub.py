@@ -1,13 +1,13 @@
 #!/usr/bin/env python
-'''rgb ROS Node'''
+'''pointCloud ROS Node'''
 # license removed for brevity
 import rospy
 from std_msgs.msg import String
 
 def talker():
-    '''rgb Publisher'''
+    '''pointCloud Publisher'''
     pub = rospy.Publisher('chatter', String, queue_size=10)
-    rospy.init_node('rgb', anonymous=True)
+    rospy.init_node('pointCloud', anonymous=True)
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
         hello_str = "hello world %s" % rospy.get_time()

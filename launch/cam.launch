@@ -1,4 +1,6 @@
 <?xml version="1.0"?>
+<include file="$(find openni2_launch)/find openni2_launch">
 <launch>
     <node name="my_camera" pkg="nav" type="cam_pub.py"/>
+    <node name="my_pointCloud" pkg="nav" type="pointCloud_sub.py"/>
 </launch>

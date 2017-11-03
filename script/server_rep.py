@@ -12,6 +12,7 @@ class Factory:
     def getClass(self, type):
         if type == 'rgb':
             return myclass.rgb.Rgb()
+        return None
 
 
 def savefile(path, data, type):
@@ -41,7 +42,8 @@ def listener():
         'cam': 'camera.jpg',
         'scan': 'laser.json',
         'position': 'position.json',
-        'recognition': 'recognition.json'
+        'recognition': 'recognition.json',
+        'pointCloud': ''
     }
 
     while True:
@@ -50,15 +52,17 @@ def listener():
         data = recv.split('---')
         if data[1] in nameDict:
             obj = factory.getClass(data[1])
-            obj.do(data[0])
-            # print data[1]
-            # func = 'wb'  # 读写方式
-            # if data[1] == 'position':
-            #     func = 'w'
-            # t = threading.Thread(target=savefile, args=(
-            #     nameDict[data[1]], data[0], func,))
-            # t.setDaemon(True)
-            # t.start()
+            if onj != None:
+                obj.do(data[0])
+            else:
+                print data[1]
+                func = 'wb'  # 读写方式
+                if data[1] == 'position':
+                    func = 'w'
+                t = threading.Thread(target=savefile, args=(
+                    nameDict[data[1]], data[0], func,))
+                t.setDaemon(True)
+                t.start()
 
 
 if __name__ == '__main__':

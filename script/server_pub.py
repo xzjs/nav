@@ -13,9 +13,10 @@ send_socket.bind("tcp://*:5556")
 
 def get_goal():
     while True:
-        message = get_socket.recv()
-        print message
-        send_socket.send(message)
+        recv = get_socket.recv()
+        get_socket.send(str(time.time()))
+        data = recv.split('---')
+        send_socket.send("%s %s" % (data[1], data[0]))
         get_socket.send('ok')
 
 
