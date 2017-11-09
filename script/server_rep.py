@@ -52,7 +52,7 @@ def listener():
         data = recv.split('---')
         if data[1] in nameDict:
             obj = factory.getClass(data[1])
-            if onj != None:
+            if obj != None:
                 obj.do(data[0])
             else:
                 print data[1]
