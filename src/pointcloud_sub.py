@@ -6,19 +6,20 @@ import json
 import rospy
 import zmq
 from sensor_msgs.msg import PointCloud2
+import pcl
+import pickle
 
 
 def callback(data):
     '''pointCloud Callback Function'''
+    byte_data = pickle.dumps(data)
     context = zmq.Context()
     socket = context.socket(zmq.REQ)
     socket.connect("tcp://172.18.29.153:5555")
-    # print data
-    s = json.dumps(data) + '---pointCloud'
-    # print s
+    s = str(byte_data) + '---pointCloud'
     socket.send(s)
     response = socket.recv()
-    print "pointCloud", response
+    print "point", response
 
 
 def listener():
@@ -30,7 +31,7 @@ def listener():
     # run simultaneously.
     rospy.init_node('pointCloud', anonymous=True)
 
-    rospy.Subscriber("/camera/depth/points", PointCloud2, callback)
+    rospy.Subscriber("/camera/depth_registered/points", PointCloud2, callback)
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
