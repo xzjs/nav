@@ -9,9 +9,10 @@ import myclass
 
 
 class Factory:
+    '''工厂类'''
     def getClass(self, type):
-        if type == 'rgb':
-            return myclass.rgb.Rgb()
+        if type == 'pointCloud':
+            return myclass.PointCloud.PointCloud()
         return None
 
 
