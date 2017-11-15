@@ -28,6 +28,11 @@ def listener():
     socket = context.socket(zmq.REP)
     socket.bind("tcp://*:5555")
     print("service start,listening 5555")
+
+    # 坐标
+    position_rep_socket = context.socket(zmq.REP)
+    position_rep_socket.bind("tcp://*:5556")
+    print "position_rep_socket start,port 5556"
     # 点云
     point_cloud_rep_socket = context.socket(zmq.REP)
     point_cloud_rep_socket.bind("tcp://*:5560")
@@ -38,6 +43,7 @@ def listener():
 
     poller = zmq.Poller()
     poller.register(point_cloud_rep_socket, zmq.POLLIN)
+    poller.register(position_rep_socket, zmq.POLLIN)
 
     # nameDict = [
     #     'map.png',
@@ -52,13 +58,21 @@ def listener():
         try:
             socks = dict(poller.poll())
         except KeyboardInterrupt:
+            print "bye"
             break
 
         if point_cloud_rep_socket in socks:
-            print "get message"
+            print "point cloud", time.time()
             recv = point_cloud_rep_socket.recv_pyobj()
             point_cloud_rep_socket.send(str(time.time()))
+            # 将消息发布出去
             point_cloud_pub_socket.send_pyobj(recv)
+
+        if position_rep_socket in socks:
+            print "position", time.time()
+            recv = position_rep_socket.recv_json()
+            position_rep_socket.send(str(time.time()))
+            json.dump(recv, '/var/www/server/map/position.json')
 
         # recv = socket.recv()
         # socket.send(str(time.time()))

@@ -10,7 +10,7 @@ from geometry_msgs.msg import Pose
 
 context = zmq.Context()
 socket = context.socket(zmq.REQ)
-socket.connect("tcp://172.18.29.153:5555")
+socket.connect("tcp://172.18.29.153:5556")
 # socket.connect("tcp://127.0.0.1:5555")
 
 
@@ -26,7 +26,7 @@ def callback(data):
     #                        * q['z'])) * 180 / math.pi - 90
     p['angle'] = angle
     rospy.loginfo(p)
-    socket.send(json.dumps(p) + '---position')
+    socket.send_json(p)
     response = socket.recv()
     print "position", response
 
