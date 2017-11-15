@@ -15,10 +15,8 @@ def callback(data):
     # byte_data = pickle.dumps(data)
     context = zmq.Context()
     socket = context.socket(zmq.REQ)
-    # socket.connect("tcp://172.18.29.153:5555")
-    socket.connect("tcp://192.168.31.5:5560")
-    # s = struct.pack('i', 4) + byte_data
-    # socket.send(s)
+    socket.connect("tcp://172.18.29.153:5555")
+    # socket.connect("tcp://192.168.31.5:5560")
     socket.send_pyobj(data)
     response = socket.recv()
     print "point", response
