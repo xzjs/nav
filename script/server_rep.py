@@ -5,14 +5,7 @@ import time
 import threading
 import numpy as np
 import json
-import myclass
-
-
-class Factory:
-    def getClass(self, type):
-        if type == 'rgb':
-            return myclass.rgb.Rgb()
-        return None
+import struct
 
 
 def savefile(path, data, type):
@@ -31,38 +24,70 @@ def savefile(path, data, type):
 
 def listener():
     context = zmq.Context()
+
     socket = context.socket(zmq.REP)
     socket.bind("tcp://*:5555")
     print("service start,listening 5555")
+    # 点云
+    point_cloud_rep_socket = context.socket(zmq.REP)
+    point_cloud_rep_socket.bind("tcp://*:5560")
+    print "point_cloud_rep_socket start,port 5560"
+    point_cloud_pub_socket = context.socket(zmq.PUB)
+    point_cloud_pub_socket.bind("tcp://*:4445")
+    print "point_cloud_pub_socket start,port 4445"
 
-    factory = Factory()
+    poller = zmq.Poller()
+    poller.register(point_cloud_rep_socket, zmq.POLLIN)
 
-    nameDict = {
-        'map': 'map.png',
-        'cam': 'camera.jpg',
-        'scan': 'laser.json',
-        'position': 'position.json',
-        'recognition': 'recognition.json',
-        'pointCloud': ''
-    }
+    # nameDict = [
+    #     'map.png',
+    #     'camera.jpg',
+    #     'laser.json',
+    #     'position.json',
+    #     'recognition.json',
+    #     'pointCloud'
+    # ]
 
     while True:
-        recv = socket.recv()
-        socket.send(str(time.time()))
-        data = recv.split('---')
-        if data[1] in nameDict:
-            obj = factory.getClass(data[1])
-            if obj != None:
-                obj.do(data[0])
-            else:
-                print data[1]
-                func = 'wb'  # 读写方式
-                if data[1] == 'position':
-                    func = 'w'
-                t = threading.Thread(target=savefile, args=(
-                    nameDict[data[1]], data[0], func,))
-                t.setDaemon(True)
-                t.start()
+        try:
+            socks = dict(poller.poll())
+        except KeyboardInterrupt:
+            break
+
+        if point_cloud_rep_socket in socks:
+            print "get message"
+            recv = point_cloud_rep_socket.recv_pyobj()
+            point_cloud_rep_socket.send(str(time.time()))
+            point_cloud_pub_socket.send_pyobj(recv)
+
+        # recv = socket.recv()
+        # socket.send(str(time.time()))
+        # temp = ''.join(recv[0:4])
+        # data = struct.unpack('i', temp)[0]
+        # print data
+        # if data < len(nameDict):
+        #     if data == 0:
+        #         pass
+        #     if data == 1:
+        #         pass
+        #     if data == 2:
+        #         pass
+        #     if data == 3:
+        #         pass
+        #     if data == 4:
+        #         pass
+        #     if data == 5:
+        #         point_cloud=''.join(recv[4:])
+        #         point_cloud_pub_socket.send
+
+            # print data[1]
+            # func = 'wb'  # 读写方式
+            # if data[1] == 'position':
+            #     func = 'w'
+            # t = threading.Thread(target=savefile, args=(
+            #     nameDict[data[1]], data[0], func,))
+            # t.setDaemon(True)
+            # t.start()
 
 
 if __name__ == '__main__':
