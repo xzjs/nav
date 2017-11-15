@@ -72,7 +72,7 @@ def listener():
             print "position", time.time()
             recv = position_rep_socket.recv_json()
             position_rep_socket.send(str(time.time()))
-            json.dump(recv, open('/var/www/server/map/position.json'))
+            json.dump(recv, open('/var/www/server/map/position.json', 'w'))
 
         # recv = socket.recv()
         # socket.send(str(time.time()))
