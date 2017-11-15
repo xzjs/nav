@@ -22,7 +22,7 @@ def listener():
 
     while True:
         # 接收消息存储图片
-        recv = socket.recv()
+        recv = socket.recv_pyobj()
         cv2.imwrite("test.jpg", recv)
 
         # # 压缩图片

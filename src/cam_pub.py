@@ -24,7 +24,7 @@ def talker():
     while not rospy.is_shutdown():
         ret, frame = cap.read()
         # img_encode = cv2.imencode('.jpg', frame)[1]
-        socket.send(frame)
+        socket.send_pyobj(frame)
         rate.sleep()
 
 
