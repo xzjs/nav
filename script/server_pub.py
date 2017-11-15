@@ -8,7 +8,7 @@ context = zmq.Context()
 get_socket = context.socket(zmq.REP)  # 接收php发送的坐标
 get_socket.bind("tcp://*:7777")
 send_socket = context.socket(zmq.PUB)  # 下发坐标
-send_socket.bind("tcp://*:5556")
+send_socket.bind("tcp://*:4444")
 
 
 def get_goal():
