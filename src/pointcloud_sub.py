@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-# -*- coding:utf-8 -*-
-'''pointCloud ROS Node'''
+# -*- coding:utf-8 -*-'''pointCloud ROS Node'''
 import json
 
 import rospy
@@ -8,16 +7,19 @@ import zmq
 from sensor_msgs.msg import PointCloud2
 import pcl
 import pickle
+import struct
 
 
 def callback(data):
     '''pointCloud Callback Function'''
-    byte_data = pickle.dumps(data)
+    # byte_data = pickle.dumps(data)
     context = zmq.Context()
     socket = context.socket(zmq.REQ)
-    socket.connect("tcp://172.18.29.153:5555")
-    s = str(byte_data) + '---pointCloud'
-    socket.send(s)
+    # socket.connect("tcp://172.18.29.153:5555")
+    socket.connect("tcp://192.168.31.5:5560")
+    # s = struct.pack('i', 4) + byte_data
+    # socket.send(s)
+    socket.send_pyobj(data)
     response = socket.recv()
     print "point", response
 
