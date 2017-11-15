@@ -7,6 +7,12 @@ import detection
 import rospy
 import numpy as np
 import base64
+import sys
+import signal
+
+
+def quit(signum, frame):
+    sys.exit()
 
 
 def listener():
@@ -20,6 +26,8 @@ def listener():
     # req_socket.connect("tcp://localhost:5555")
     net, classes = detection.get_net()
 
+    signal.signal(signal.SIGINT, quit)
+    signal.signal(signal.SIGTERM, quit)
     while True:
         # 接收消息存储图片
         recv = socket.recv_pyobj()

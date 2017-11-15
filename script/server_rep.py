@@ -87,6 +87,8 @@ def listener():
             recv = camera_rep_socket.recv_pyobj()
             camera_rep_socket.send(str(time.time()))
             f = open('/var/www/server/map/camera.jpg', 'wb')
+            f.write(recv)
+            f.close()
 
         # recv = socket.recv()
         # socket.send(str(time.time()))
