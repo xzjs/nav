@@ -81,10 +81,12 @@ def listener():
             recv = position_rep_socket.recv_json()
             position_rep_socket.send(str(time.time()))
             json.dump(recv, open('/var/www/server/map/position.json', 'w'))
-        
+
         if camera_rep_socket in socks:
-            print "camera",time.time()
-            
+            print "camera", time.time()
+            recv = camera_rep_socket.recv_pyobj()
+            camera_rep_socket.send(str(time.time()))
+            f = open('/var/www/server/map/camera.jpg', 'wb')
 
         # recv = socket.recv()
         # socket.send(str(time.time()))

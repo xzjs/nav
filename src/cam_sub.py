@@ -23,17 +23,16 @@ def listener():
     while True:
         # 接收消息存储图片
         recv = socket.recv_pyobj()
-        cv2.imwrite("test.jpg", recv)
+        # cv2.imwrite("test.jpg", recv)
 
-        # # 压缩图片
-        # res = cv2.resize(img_decode, (320, 240), interpolation=cv2.INTER_AREA)
+        # 压缩图片
+        res = cv2.resize(recv, (320, 240), interpolation=cv2.INTER_AREA)
 
-        # # 上传图片
-        # img_encode = cv2.imencode('.jpg', res)[1]
-        # data_encode = np.array(img_encode)
-        # req_socket.send(data_encode)
-        # response = req_socket.recv()
-        # print 'upload camera success', response
+        # 上传图片
+        jpg = cv2.imencode('.jpg', res)[1]
+        req_socket.send_pyobj(jpg)
+        response = req_socket.recv()
+        print 'upload camera success', response
 
         # # 识别图片
         # result = detection.recognize(net, classes, img_decode)
@@ -45,5 +44,8 @@ def listener():
 
 
 if __name__ == '__main__':
-    rospy.init_node('my_camera', anonymous=True)
-    listener()
+    try:
+        rospy.init_node('my_camera', anonymous=True)
+        listener()
+    except KeyboardInterrupt:
+        print 'bye'
