@@ -25,14 +25,21 @@ def savefile(path, data, type):
 def listener():
     context = zmq.Context()
 
-    socket = context.socket(zmq.REP)
-    socket.bind("tcp://*:5555")
-    print("service start,listening 5555")
+    # map
+    map_rep_socket = context.socket(zmq.REP)
+    map_rep_socket.bind("tcp://*:5555")
+    print "map_rep_socket start,port 5555"
 
     # 坐标
     position_rep_socket = context.socket(zmq.REP)
     position_rep_socket.bind("tcp://*:5556")
     print "position_rep_socket start,port 5556"
+
+    # camera
+    camera_rep_socket = context.socket(zmq.REP)
+    camera_rep_socket.bind("tcp://*:5557")
+    print "camera_rep_socket start,port 5557"
+
     # 点云
     point_cloud_rep_socket = context.socket(zmq.REP)
     point_cloud_rep_socket.bind("tcp://*:5560")
@@ -44,6 +51,7 @@ def listener():
     poller = zmq.Poller()
     poller.register(point_cloud_rep_socket, zmq.POLLIN)
     poller.register(position_rep_socket, zmq.POLLIN)
+    poller.register(camera_rep_socket, zmq.POLLIN)
 
     # nameDict = [
     #     'map.png',
@@ -73,6 +81,10 @@ def listener():
             recv = position_rep_socket.recv_json()
             position_rep_socket.send(str(time.time()))
             json.dump(recv, open('/var/www/server/map/position.json', 'w'))
+        
+        if camera_rep_socket in socks:
+            print "camera",time.time()
+            
 
         # recv = socket.recv()
         # socket.send(str(time.time()))

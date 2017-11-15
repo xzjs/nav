@@ -23,18 +23,8 @@ def talker():
     rate = rospy.Rate(2)
     while not rospy.is_shutdown():
         ret, frame = cap.read()
-        # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        # cv2.imshow('frame', gray)
-        # res = cv2.resize(frame, (320, 240), interpolation=cv2.INTER_CUBIC)
-        # cv2.imwrite("/tmp/camera.jpg", frame)
-        # f = open('/tmp/camera.jpg', 'rb')  # 读取摄像头图片
-        # data = f.read() + '---' + 'cam'
-        # socket.send(data)
         img_encode = cv2.imencode('.jpg', frame)[1]
-        data_encode = np.array(img_encode)
-        str_encode = data_encode.tostring()
-        rospy.loginfo(str(time.time()))
-        socket.send(str_encode)
+        socket.send(img_encode)
         rate.sleep()
 
 
