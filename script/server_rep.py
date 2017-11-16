@@ -48,10 +48,16 @@ def listener():
     point_cloud_pub_socket.bind("tcp://*:4445")
     print "point_cloud_pub_socket start,port 4445"
 
+    # 点云处理结果
+    point_result_rep_socket=context.socket(zmq.REP)
+    point_result_rep_socket.bind("tcp://*:5561")
+    print "point_result_rep_socket start,port 5560"
+
     poller = zmq.Poller()
     poller.register(point_cloud_rep_socket, zmq.POLLIN)
     poller.register(position_rep_socket, zmq.POLLIN)
     poller.register(camera_rep_socket, zmq.POLLIN)
+    poller.register(point_result_rep_socket,zmq.POLLIN)
 
     # nameDict = [
     #     'map.png',
@@ -89,6 +95,12 @@ def listener():
             f = open('/var/www/server/map/camera.jpg', 'wb')
             f.write(recv)
             f.close()
+        
+        if point_result_rep_socket in socks:
+            print "point result",time.time()
+            recv=point_cloud_rep_socket.recv_json()
+            point_result_rep_socket.send_json(recv) #暂时先将结果返回回去
+
 
         # recv = socket.recv()
         # socket.send(str(time.time()))
