@@ -98,7 +98,7 @@ def listener():
 
         if point_result_rep_socket in socks:
             print "point result", time.time()
-            recv = point_cloud_rep_socket.recv_json()
+            recv = point_result_rep_socket.recv_json()
             print recv
             point_result_rep_socket.send_json(recv)  # 暂时先将结果返回回去
 
