@@ -8,22 +8,9 @@ import json
 import struct
 
 
-def savefile(path, data, type):
-    if path == "laser.json":
-        laser = json.loads(data)
-        if laser['frame_id'] == "/front_laser_link":
-            path = "f_laser.json"
-        else:
-            path = "b_laser.json"
-        data = json.dumps(laser['ranges'])
-    f = open('/var/www/server/map/' + path, type)
-    f.write(data)
-    f.close()
-    print path + ' ok,time ', time.time()
-
-
 def listener():
     context = zmq.Context()
+    poller = zmq.Poller()
 
     # map
     map_rep_socket = context.socket(zmq.REP)
@@ -34,16 +21,20 @@ def listener():
     position_rep_socket = context.socket(zmq.REP)
     position_rep_socket.bind("tcp://*:5556")
     print "position_rep_socket start,port 5556"
+    poller.register(position_rep_socket, zmq.POLLIN)
 
     # camera
     camera_rep_socket = context.socket(zmq.REP)
     camera_rep_socket.bind("tcp://*:5557")
     print "camera_rep_socket start,port 5557"
+    poller.register(camera_rep_socket, zmq.POLLIN)
 
     # 点云
     point_cloud_rep_socket = context.socket(zmq.REP)
     point_cloud_rep_socket.bind("tcp://*:5560")
     print "point_cloud_rep_socket start,port 5560"
+    poller.register(point_cloud_rep_socket, zmq.POLLIN)
+
     point_cloud_pub_socket = context.socket(zmq.PUB)
     point_cloud_pub_socket.bind("tcp://*:4445")
     print "point_cloud_pub_socket start,port 4445"
@@ -52,21 +43,17 @@ def listener():
     point_result_rep_socket = context.socket(zmq.REP)
     point_result_rep_socket.bind("tcp://*:5561")
     print "point_result_rep_socket start,port 5561"
-
-    poller = zmq.Poller()
-    poller.register(point_cloud_rep_socket, zmq.POLLIN)
-    poller.register(position_rep_socket, zmq.POLLIN)
-    poller.register(camera_rep_socket, zmq.POLLIN)
     poller.register(point_result_rep_socket, zmq.POLLIN)
 
-    # nameDict = [
-    #     'map.png',
-    #     'camera.jpg',
-    #     'laser.json',
-    #     'position.json',
-    #     'recognition.json',
-    #     'pointCloud'
-    # ]
+    # php发送鼠标点击位置
+    php_rep_socket = context.socket(zmq.REP)
+    php_rep_socket.bind("tcp://*:7777")
+    print 'php_rep_socket start,port 7777'
+    poller.register(php_rep_socket, zmq.POLLIN)
+
+    nav_pub_socket = context.socket(zmq.PUB)
+    nav_pub_socket.bind("tcp://*:4444")
+    print "nav_pub_socket start,port 4444"
 
     while True:
         try:
@@ -102,34 +89,12 @@ def listener():
             print recv
             point_result_rep_socket.send_json(recv)  # 暂时先将结果返回回去
 
-        # recv = socket.recv()
-        # socket.send(str(time.time()))
-        # temp = ''.join(recv[0:4])
-        # data = struct.unpack('i', temp)[0]
-        # print data
-        # if data < len(nameDict):
-        #     if data == 0:
-        #         pass
-        #     if data == 1:
-        #         pass
-        #     if data == 2:
-        #         pass
-        #     if data == 3:
-        #         pass
-        #     if data == 4:
-        #         pass
-        #     if data == 5:
-        #         point_cloud=''.join(recv[4:])
-        #         point_cloud_pub_socket.send
+        if php_rep_socket in socks:
+            print "php", time.time()
+            recv = php_rep_socket.recv()
+            php_rep_socket.send(str(time.time()))
 
-            # print data[1]
-            # func = 'wb'  # 读写方式
-            # if data[1] == 'position':
-            #     func = 'w'
-            # t = threading.Thread(target=savefile, args=(
-            #     nameDict[data[1]], data[0], func,))
-            # t.setDaemon(True)
-            # t.start()
+            nav_pub_socket.send(recv)
 
 
 if __name__ == '__main__':
