@@ -21,9 +21,13 @@ def listener():
     socket.connect("tcp://192.168.31.4:5555")
     socket.setsockopt(zmq.SUBSCRIBE, '')
     print("waiting camera")
+    # 上传摄像头数据
     req_socket = context.socket(zmq.REQ)
     req_socket.connect("tcp://172.18.29.153:5557")
-    # req_socket.connect("tcp://localhost:5555")
+    # 上传识别结果
+    detection_req_socket = context.socket(zmq.REQ)
+    detection_req_socket.connect("tcp://172.18.29.153:5558")
+
     net, classes = detection.get_net()
 
     signal.signal(signal.SIGINT, quit)
@@ -31,26 +35,26 @@ def listener():
     while True:
         # 接收消息存储图片
         recv = socket.recv_pyobj()
-        cv2.imwrite("/tmp/cam.jpg", recv)
+        # cv2.imwrite("/tmp/cam_big.jpg", res)
 
-        # 上传图片
-        jpg = open('/tmp/cam.jpg', 'rb').read()
-        req_socket.send(jpg)
-        response = req_socket.recv()
-        print 'upload camera success', response
+        # # 压缩图片
+        # res = cv2.resize(recv, (320, 240), interpolation=cv2.INTER_AREA)
+        # cv2.imwrite("/tmp/cam_small.jpg", res)
 
-        # 压缩图片
-        res = cv2.resize(recv, (320, 240), interpolation=cv2.INTER_AREA)
+        # # 上传图片
+        # jpg = open('/tmp/cam_small.jpg', 'rb').read()
+        # req_socket.send(jpg)
+        # response = req_socket.recv()
+        # print 'upload camera success', response
 
-        
-
-        # # 识别图片
-        # result = detection.recognize(net, classes, img_decode)
-        # if result:
-        #     # print result
-        #     req_socket.send(result + "---recognition")
-        #     response = req_socket.recv()
-        #     print "upload recogniction success", response
+        # 识别图片
+        img = cv2.imread("/tmp/cam_big.jpg")
+        result = detection.recognize(net, classes, img)
+        if result:
+            # print result
+            detection_req_socket.send(result)
+            response = detection_req_socket.recv()
+            print "upload recogniction success", response
 
 
 if __name__ == '__main__':

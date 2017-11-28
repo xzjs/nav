@@ -29,6 +29,12 @@ def listener():
     print "camera_rep_socket start,port 5557"
     poller.register(camera_rep_socket, zmq.POLLIN)
 
+    # 识别
+    detection_rep_socket = context.socket(zmq.REP)
+    detection_rep_socket.bind("tcp://*:5558")
+    print "detection_rep_socket start,port 5558"
+    poller.register(detection_rep_socket, zmq.POLLIN)
+
     # 点云
     point_cloud_rep_socket = context.socket(zmq.REP)
     point_cloud_rep_socket.bind("tcp://*:5560")
@@ -82,6 +88,12 @@ def listener():
             f = open('/var/www/server/map/camera.jpg', 'wb')
             f.write(recv)
             f.close()
+
+        if detection_rep_socket in socks:
+            print "dection", time.time()
+            recv = detection_rep_socket.recv()
+            detection_rep_socket.send(str(time.time()))
+            json.dump(recv, open('/var/www/server/map/recognition.json', 'w'))
 
         if point_result_rep_socket in socks:
             print "point result", time.time()
