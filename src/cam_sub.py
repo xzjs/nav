@@ -33,14 +33,16 @@ def listener():
         recv = socket.recv_pyobj()
         cv2.imwrite("/tmp/cam.jpg", recv)
 
-        # 压缩图片
-        res = cv2.resize(recv, (320, 240), interpolation=cv2.INTER_AREA)
-
         # 上传图片
-        jpg=open('/tmp/cam.jpg','rb')
+        jpg = open('/tmp/cam.jpg', 'rb').read()
         req_socket.send(jpg)
         response = req_socket.recv()
         print 'upload camera success', response
+
+        # 压缩图片
+        res = cv2.resize(recv, (320, 240), interpolation=cv2.INTER_AREA)
+
+        
 
         # # 识别图片
         # result = detection.recognize(net, classes, img_decode)

@@ -20,7 +20,7 @@ def talker():
     '''cam Publisher'''
     rospy.init_node('my_cam', anonymous=True)
 
-    rate = rospy.Rate(2)
+    rate = rospy.Rate(5)
     while not rospy.is_shutdown():
         ret, frame = cap.read()
         # img_encode = cv2.imencode('.jpg', frame)[1]
