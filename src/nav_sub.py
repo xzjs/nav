@@ -12,7 +12,7 @@ from nav_msgs.srv import GetPlan
 
 context = zmq.Context()
 socket = context.socket(zmq.SUB)
-socket.connect("tcp://172.18.29.153:5556")
+socket.connect("tcp://172.18.29.153:4444")
 socket.setsockopt(zmq.SUBSCRIBE, '')
 rospy.init_node('send_client', anonymous=True)
 

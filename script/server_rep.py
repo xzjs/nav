@@ -77,7 +77,7 @@ def listener():
 
         if camera_rep_socket in socks:
             print "camera", time.time()
-            recv = camera_rep_socket.recv_pyobj()
+            recv = camera_rep_socket.recv()
             camera_rep_socket.send(str(time.time()))
             f = open('/var/www/server/map/camera.jpg', 'wb')
             f.write(recv)
