@@ -14,7 +14,7 @@ cap = cv2.VideoCapture(0)
 context = zmq.Context()
 socket = context.socket(zmq.PUB)
 socket.bind("tcp://*:5555")
-camera_req_socket=context.socket(zmq.REQ)
+camera_req_socket = context.socket(zmq.REQ)
 camera_req_socket.connect("tcp://iarobot.org:5557")
 
 
@@ -32,7 +32,7 @@ def talker():
         jpg = open('/tmp/cam_small.jpg', 'rb').read()
         camera_req_socket.send(jpg)
         response = camera_req_socket.recv()
-        print 'upload camera success', response
+        print 'upload camera success', response, time.time()
         socket.send_pyobj(frame)
         rate.sleep()
 
