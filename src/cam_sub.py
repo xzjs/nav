@@ -35,7 +35,7 @@ def listener():
     while True:
         # 接收消息存储图片
         recv = socket.recv_pyobj()
-        cv2.imwrite("/tmp/cam_big.jpg", res)
+        cv2.imwrite("/tmp/cam_big.jpg", recv)
 
         # # 压缩图片
         # res = cv2.resize(recv, (320, 240), interpolation=cv2.INTER_AREA)
@@ -51,7 +51,7 @@ def listener():
         img = cv2.imread("/tmp/cam_big.jpg")
         result = detection.recognize(net, classes, img)
         if result:
-            # print result
+            print result
             detection_req_socket.send(result)
             response = detection_req_socket.recv()
             print "upload recogniction success", response

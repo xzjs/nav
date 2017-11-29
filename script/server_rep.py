@@ -95,7 +95,7 @@ def listener():
 
         if detection_rep_socket in socks:
             print "dection", time.time()
-            recv = detection_rep_socket.recv()
+            recv = detection_rep_socket.recv_json()
             detection_rep_socket.send(str(time.time()))
             json.dump(recv, open('/var/www/server/map/recognition.json', 'w'))
 
