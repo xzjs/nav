@@ -6,6 +6,8 @@ import threading
 import numpy as np
 import json
 import struct
+import base64
+import redis
 
 
 def listener():
@@ -61,6 +63,9 @@ def listener():
     nav_pub_socket.bind("tcp://*:4444")
     print "nav_pub_socket start,port 4444"
 
+    # redis
+    r = redis.Redis(host='127.0.0.1', port=6379, db=0)
+
     while True:
         try:
             socks = dict(poller.poll())
@@ -85,9 +90,8 @@ def listener():
             print "camera", time.time()
             recv = camera_rep_socket.recv()
             camera_rep_socket.send(str(time.time()))
-            f = open('/var/www/server/map/camera.jpg', 'wb')
-            f.write(recv)
-            f.close()
+            base_str = base64.b64encode(recv)
+            r.set('img',base_str)
 
         if detection_rep_socket in socks:
             print "dection", time.time()

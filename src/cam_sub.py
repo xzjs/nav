@@ -35,7 +35,7 @@ def listener():
     while True:
         # 接收消息存储图片
         recv = socket.recv_pyobj()
-        # cv2.imwrite("/tmp/cam_big.jpg", res)
+        cv2.imwrite("/tmp/cam_big.jpg", res)
 
         # # 压缩图片
         # res = cv2.resize(recv, (320, 240), interpolation=cv2.INTER_AREA)
