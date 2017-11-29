@@ -90,8 +90,11 @@ def listener():
             print "camera", time.time()
             recv = camera_rep_socket.recv()
             camera_rep_socket.send(str(time.time()))
-            base_str = base64.b64encode(recv)
-            r.set('img',base_str)
+            f = open('/var/www/server/map/camera.jpg', 'wb') 
+            f.write(recv) 
+            f.close() 
+            # base_str = base64.b64encode(recv)
+            # r.set('img',base_str)
 
         if detection_rep_socket in socks:
             print "dection", time.time()
