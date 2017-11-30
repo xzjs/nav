@@ -38,9 +38,9 @@ def mapService(map):
     img = img.transpose(Image.FLIP_TOP_BOTTOM)
     img.save('/tmp/map.png')  # 保存地图数据,转换为png压缩图片大小
     f = open('/tmp/map.png', 'rb')  # 读取地图数据
-    data = f.read() + '---map---' + str(map.header.stamp)
+    data = f.read()
     socket.send(data)
-    response=socket.recv()
+    response = socket.recv()
 
 
 def getMap():

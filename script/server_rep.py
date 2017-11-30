@@ -21,6 +21,7 @@ def listener():
     map_rep_socket = context.socket(zmq.REP)
     map_rep_socket.bind("tcp://*:5555")
     print "map_rep_socket start,port 5555"
+    poller.register(map_rep_socket, zmq.POLLIN)
 
     # 坐标
     position_rep_socket = context.socket(zmq.REP)
@@ -75,6 +76,15 @@ def listener():
         except KeyboardInterrupt:
             print "bye"
             break
+
+
+        if map_rep_socket in socks:
+            print "map", time.time()
+            recv = map_rep_socket.recv()
+            camera_rep_socket.send(str(time.time()))
+            f = open(path + 'map.png', 'wb')
+            f.write(recv)
+            f.close()
 
         if point_cloud_rep_socket in socks:
             print "point cloud", time.time()
