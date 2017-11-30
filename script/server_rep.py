@@ -81,7 +81,7 @@ def listener():
         if map_rep_socket in socks:
             print "map", time.time()
             recv = map_rep_socket.recv()
-            camera_rep_socket.send(str(time.time()))
+            map_rep_socket.send(str(time.time()))
             f = open(path + 'map.png', 'wb')
             f.write(recv)
             f.close()
