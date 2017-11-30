@@ -14,6 +14,9 @@ def listener():
     context = zmq.Context()
     poller = zmq.Poller()
 
+    # 文件存储路径
+    path = "/var/www/server/mapcache/"
+
     # map
     map_rep_socket = context.socket(zmq.REP)
     map_rep_socket.bind("tcp://*:5555")
@@ -84,15 +87,15 @@ def listener():
             print "position", time.time()
             recv = position_rep_socket.recv_json()
             position_rep_socket.send(str(time.time()))
-            json.dump(recv, open('/var/www/server/map/position.json', 'w'))
+            json.dump(recv, open(path + 'position.json', 'w'))
 
         if camera_rep_socket in socks:
             print "camera", time.time()
             recv = camera_rep_socket.recv()
             camera_rep_socket.send(str(time.time()))
-            f = open('/var/www/server/map/camera.jpg', 'wb') 
-            f.write(recv) 
-            f.close() 
+            f = open(path + 'camera.jpg', 'wb')
+            f.write(recv)
+            f.close()
             # base_str = base64.b64encode(recv)
             # r.set('img',base_str)
 
@@ -100,7 +103,7 @@ def listener():
             print "dection", time.time()
             recv = detection_rep_socket.recv_json()
             detection_rep_socket.send(str(time.time()))
-            json.dump(recv, open('/var/www/server/map/recognition.json', 'w'))
+            json.dump(recv, open(path + 'recognition.json', 'w'))
 
         if point_result_rep_socket in socks:
             print "point result", time.time()
