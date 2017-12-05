@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 '''scan ROS Node'''
+import json
 import time
 
 # license removed for brevity
 import rospy
 import zmq
 from sensor_msgs.msg import LaserScan
-import json
 
 
 # socket.connect("tcp://127.0.0.1:5555")
@@ -17,12 +17,11 @@ def callback(data):
     '''scan Callback Function'''
     context = zmq.Context()
     socket = context.socket(zmq.REQ)
-    socket.connect("tcp://172.18.29.153:5555")
-    # print data
+    socket.connect("tcp://172.18.29.153:5559")
+    print data
     d = {'frame_id': data.header.frame_id, 'ranges': data.ranges}
-    s = json.dumps(d) + '---scan'
-    # print s
-    socket.send(s)
+
+    socket.send_json(d)
     response = socket.recv()
     print "laser", response
 

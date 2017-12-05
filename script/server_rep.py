@@ -41,6 +41,12 @@ def listener():
     print "detection_rep_socket start,port 5558"
     poller.register(detection_rep_socket, zmq.POLLIN)
 
+    # 激光数据
+    laser_rep_socket = context.socket(zmq.REP)
+    laser_rep_socket.bind("tcp://*:5559")
+    print "laser_rep_socket start,port 5559"
+    poller.register(laser_rep_socket, zmq.POLLIN)
+
     # 点云
     point_cloud_rep_socket = context.socket(zmq.REP)
     point_cloud_rep_socket.bind("tcp://*:5560")
@@ -76,7 +82,6 @@ def listener():
         except KeyboardInterrupt:
             print "bye"
             break
-
 
         if map_rep_socket in socks:
             print "map", time.time()
@@ -127,6 +132,15 @@ def listener():
             php_rep_socket.send(str(time.time()))
 
             nav_pub_socket.send(recv)
+
+        if laser_rep_socket in socks:
+            print "laser", time.time()
+            recv = laser_rep_socket.recv_json()
+            laser_rep_socket.send(str(time.time()))
+            if recv.frame_id == '/front_laser_link':
+                json.dump(recv, open(path + 'f_laser.json', 'w'))
+            else:
+                json.dump(recv, open(path + 'b_laser.json', 'w'))
 
 
 if __name__ == '__main__':
