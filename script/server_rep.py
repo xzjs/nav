@@ -138,9 +138,9 @@ def listener():
             recv = laser_rep_socket.recv_json()
             laser_rep_socket.send(str(time.time()))
             if recv['frame_id'] == '/front_laser_link':
-                json.dump(recv, open(path + 'f_laser.json', 'w'))
+                json.dump(recv['ranges'], open(path + 'f_laser.json', 'w'))
             else:
-                json.dump(recv, open(path + 'b_laser.json', 'w'))
+                json.dump(recv['ranges'], open(path + 'b_laser.json', 'w'))
 
 
 if __name__ == '__main__':
