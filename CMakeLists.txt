@@ -35,6 +35,7 @@ find_package(catkin REQUIRED)
 ## * In this file (CMakeLists.txt):
 ##   * add "message_generation" and every package in MSG_DEP_SET to
 find_package(catkin REQUIRED COMPONENTS
+  roscpp
   message_generation
 )
 ##   * add "message_runtime" and every package in MSG_DEP_SET to
@@ -113,6 +114,10 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
+  include ${catkin_INCLUDE_DIRS}
+  include ${catkin_INCLUDE_DIRS}
+  include ${catkin_INCLUDE_DIRS}
+  include ${catkin_INCLUDE_DIRS}
 # include
 # ${catkin_INCLUDE_DIRS}
 )
@@ -194,3 +199,19 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+add_executable(test_pub
+  src/test_pub.cpp
+)
+add_dependencies(test_pub ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(test_pub
+  ${catkin_LIBRARIES}
+)
+
+add_executable(test_sub
+  src/test_sub.cpp
+)
+add_dependencies(test_sub ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(test_sub
+  ${catkin_LIBRARIES}
+)

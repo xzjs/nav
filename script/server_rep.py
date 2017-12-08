@@ -7,7 +7,6 @@ import numpy as np
 import json
 import struct
 import base64
-import redis
 
 
 def listener():
@@ -63,6 +62,12 @@ def listener():
     print "point_result_rep_socket start,port 5561"
     poller.register(point_result_rep_socket, zmq.POLLIN)
 
+    # 人脸识别
+    face_rep_socket = context.socket(zmq.REP)
+    face_rep_socket.bind("tcp://*:5562")
+    print "face_rep_socket start,port 5562"
+    poller.register(face_rep_socket, zmq.POLLIN)
+
     # php发送鼠标点击位置
     php_rep_socket = context.socket(zmq.REP)
     php_rep_socket.bind("tcp://*:7777")
@@ -72,9 +77,6 @@ def listener():
     nav_pub_socket = context.socket(zmq.PUB)
     nav_pub_socket.bind("tcp://*:4444")
     print "nav_pub_socket start,port 4444"
-
-    # redis
-    r = redis.Redis(host='127.0.0.1', port=6379, db=0)
 
     while True:
         try:
@@ -137,10 +139,16 @@ def listener():
             print "laser", time.time()
             recv = laser_rep_socket.recv_json()
             laser_rep_socket.send(str(time.time()))
-            if recv.frame_id == '/front_laser_link':
-                json.dump(recv, open(path + 'f_laser.json', 'w'))
+            if recv['frame_id'] == '/front_laser_link':
+                json.dump(recv['ranges'], open(path + 'f_laser.json', 'w'))
             else:
-                json.dump(recv, open(path + 'b_laser.json', 'w'))
+                json.dump(recv['ranges'], open(path + 'b_laser.json', 'w'))
+
+        if face_rep_socket in socks:
+            print "face", time.time()
+            recv = face_rep_socket.recv_json()
+            face_rep_socket.send(str(time.time()))
+            json.dump(recv, open(path + 'face.json', 'w'))
 
 
 if __name__ == '__main__':
