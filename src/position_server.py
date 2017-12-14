@@ -25,7 +25,7 @@ def callback(data):
     # angle = math.asin(2 * (q['w'] * q['x'] - q['y']
     #                        * q['z'])) * 180 / math.pi - 90
     p['angle'] = angle
-    rospy.loginfo(p)
+    # rospy.loginfo(p)
     socket.send_json(p)
     response = socket.recv()
     print "position", response

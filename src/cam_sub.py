@@ -36,23 +36,26 @@ def listener():
 
     signal.signal(signal.SIGINT, quit)
     signal.signal(signal.SIGTERM, quit)
+    i = 0
     while True:
         # 接收消息存储图片
         recv = socket.recv_pyobj()
+        i = i + 1
+        if i % 5 != 0:
+            continue
         cv2.imwrite("/tmp/cam_big.jpg", recv)
 
-        threads = []
+        # threads = []
         # t1 = threading.Thread(target=recognize, args=(recv,))
         # threads.append(t1)
-        # t2 = threading.Thread(target=distinguish, args=('/tmp/cam_big.jpg',))
-        # threads.append(t2)
+        # # t2 = threading.Thread(target=distinguish, args=('/tmp/cam_big.jpg',))
+        # # threads.append(t2)
 
         # for t in threads:
-        #     t.setDaemon(True)
         #     t.start
 
         recognize(recv)
-        distinguish('/tmp/cam_big.jpg')
+        # distinguish('/tmp/cam_big.jpg')
 
 
 def recognize(recv):
