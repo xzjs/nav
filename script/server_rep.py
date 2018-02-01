@@ -34,6 +34,10 @@ def listener():
     print "camera_rep_socket start,port 5557"
     poller.register(camera_rep_socket, zmq.POLLIN)
 
+    camera_pub_socket = context.socket(zmq.PUB)
+    camera_pub_socket.bind("tcp://*:4446")
+    print "camera_pub_socket start,port 4446"
+
     # 识别
     detection_rep_socket = context.socket(zmq.REP)
     detection_rep_socket.bind("tcp://*:5558")
@@ -67,6 +71,12 @@ def listener():
     face_rep_socket.bind("tcp://*:5562")
     print "face_rep_socket start,port 5562"
     poller.register(face_rep_socket, zmq.POLLIN)
+
+    # 激光雷达数据
+    slam_rep_socket = context.socket(zmq.REP)
+    slam_rep_socket.bind("tcp://*:5563")
+    print "slam_rep_socket start,port 5562"
+    poller.register(slam_rep_socket, zmq.POLLIN)
 
     # php发送鼠标点击位置
     php_rep_socket = context.socket(zmq.REP)
@@ -113,8 +123,8 @@ def listener():
             f = open(path + 'camera.jpg', 'wb')
             f.write(recv)
             f.close()
-            # base_str = base64.b64encode(recv)
-            # r.set('img',base_str)
+            # 发布camera
+            camera_pub_socket.send(recv)
 
         if detection_rep_socket in socks:
             print "dection", time.time()
@@ -149,6 +159,12 @@ def listener():
             recv = face_rep_socket.recv_json()
             face_rep_socket.send(str(time.time()))
             json.dump(recv, open(path + 'face.json', 'w'))
+
+        if slam_rep_socket in socks:
+            print "slam", time.time()
+            recv = slam_rep_socket.recv_json()
+            slam_rep_socket.send(str(time.time()))
+            json.dump(recv, open(path + 'slam.json', 'w'))
 
 
 if __name__ == '__main__':

@@ -14,7 +14,16 @@ import subprocess
 import json
 
 context = zmq.Context()
-net, classes = detection.get_net()
+
+socket = context.socket(zmq.REQ)
+socket.connect("tcp://localhost:5555")
+detection_req_socket = context.socket(zmq.REQ)
+detection_req_socket.connect("tcp://172.18.29.153:5558")
+# sub_socket = context.socket(zmq.SUB)
+# sub_socket.connect("tcp://iarobot.org:4446")
+# sub_socket.setsockopt(zmq.SUBSCRIBE, '')
+
+# net, classes = detection.get_net()
 
 data = [{'name': '无双公子', 'path': '/home/ros/htb/src/nav/bin/distinguish/pics/2-1.jpg'}]
 
@@ -29,21 +38,21 @@ class Face:
 
 
 def listener():
-    socket = context.socket(zmq.SUB)
-    socket.connect("tcp://192.168.31.4:5555")
-    socket.setsockopt(zmq.SUBSCRIBE, '')
     print("waiting camera")
 
     signal.signal(signal.SIGINT, quit)
     signal.signal(signal.SIGTERM, quit)
-    i = 0
+    # i = 0
     while True:
         # 接收消息存储图片
-        recv = socket.recv_pyobj()
-        i = i + 1
-        if i % 5 != 0:
-            continue
-        cv2.imwrite("/tmp/cam_big.jpg", recv)
+        # recv = socket.recv()
+        # f = open(path + 'cam_big.jpg', 'wb')
+        # f.write(recv)
+        # f.close()
+        # i = i + 1
+        # if i % 5 != 0:
+        #     continue
+        # cv2.imwrite("/tmp/cam_big.jpg", recv)
 
         # threads = []
         # t1 = threading.Thread(target=recognize, args=(recv,))
@@ -54,8 +63,18 @@ def listener():
         # for t in threads:
         #     t.start
 
-        recognize(recv)
+        # recognize(recv)
         # distinguish('/tmp/cam_big.jpg')
+        yolo()
+
+
+def yolo():
+    path = "/tmp/camera.jpg"
+    socket.send(path)
+    message = socket.recv()
+    detection_req_socket.send(message)
+    response = detection_req_socket.recv()
+    print "upload recogniction success", response
 
 
 def recognize(recv):
